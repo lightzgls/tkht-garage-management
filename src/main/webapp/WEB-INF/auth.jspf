@@ -1,0 +1,10 @@
+<%@ page import="vn.edu.garage.model.Staff2,vn.edu.garage.model.ManagementStaff" %>
+<%
+    Staff2 staff = (Staff2) session.getAttribute("staff");
+    if (!(staff instanceof ManagementStaff)) {
+        response.sendRedirect("LoginUI2.jsp");
+        return;
+    }
+    response.setHeader("Cache-Control", "no-store");
+    request.setAttribute("staff", staff);
+%>

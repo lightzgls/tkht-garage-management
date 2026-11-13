@@ -1,0 +1,480 @@
+Subject No. 30
+Duration: 90 minutes
+A garage management system enables management staff, sales staff, warehouse staff, and customers to use:
+Management staff: view the statistics categories: services, parts, customers and suppliers. Service information management, spare parts.
+Warehouse staff: import spare parts from suppliers, manage supplier information
+Sale staff: receive customers, receive service and spare parts requests from customers, assign technical staff according to customer service requirements, receive payment from customers.
+Customer: Search service information, book an appointment online
+Considering two  modules and answering questions
+Customer searches for service information: selects the menu to find service / spare parts information → enters the service / part name to search → the system displays a list of services / parts whose name contains the entered keyword → clicks on a service/part to view details → the system displays detailed information about the service/part.
+Management staff views customer statistics: selects the menu to view statistical reports → selects customer statistics by revenue → selects the start and end date of statistics → views customer statistics → clicks on a customer → view details of the invoices of the customer → clicks on an invoice → view the detail selected invoice.
+Question 1 (2 points)
+a. Build the use case diagram for the two modules
+b. Present scenarios for the two modules
+Question 2 (2 points)  
+a. Extract the enity classes (class name, attributes) related to the two modules
+b. Build the entity class disgram for the extracted classes.
+Question 3 (2 points)  
+a. Build the communication diagram for the standard scenario of the two modules.
+b. Build the detail design class diagram for the two modules.
+Question 4 (2 points) 
+a. Based on the entity classes of Question 2, design the database related to the two modules
+b. Generate Java code (class template, declaration of attributes and methods, explain how  methods work) for classes in the diagram of Question 3.b.
+Question 5 (2 points)  
+a. Build the package diagram for classes in the diagram of Question 3.b.
+b. Build the deployment diagram for MVC model based on the J2EE technology.
+THIẾT KẾ LỚP THỰC THỂ 
+Bổ sung thuộc tính id
+Các lớp thực thể không kế thừa từ lớp khác được bổ sung thuộc tính id, gồm:
+Staff2
+Customer2
+Supplier2
+Service2
+SparePart2
+Appointment2
+Order2
+OrderDetail2
+PartsReceipt2
+PartsReceiptDetail2
+Invoice2
+Các lớp ManagementStaff2, SalesStaff2, WarehouseStaff2 và TechnicalStaff2 kế thừa Staff2 nên sử dụng id được kế thừa từ Staff2.
+Các lớp ServiceDetail2 và PartDetail2 kế thừa OrderDetail2 nên sử dụng id được kế thừa từ OrderDetail2.
+Các lớp thống kê CustomerStatistic2, ServiceStatistic2, SparePartStatistic2 và SupplierStatistic2 kế thừa từ các lớp thực thể tương ứng nên không bổ sung id riêng.
+Bổ sung kiểu dữ liệu cho các thuộc tính
+Các thuộc tính của các lớp thực thể được bổ sung kiểu dữ liệu theo ngôn ngữ Java.
+Ví dụ:
+Staff2: id: int, name: String, tel: String, email: String, username: String, password: String, status: String.
+Customer2: id: int, code: String, name: String, tel: String, email: String, address: String.
+Supplier2: id: int, name: String, taxCode: String, tel: String, email: String, address: String, status: String.
+Service2: id: int, code: String, name: String, description: String, basePrice: double, estimatedDuration: int, tax: double, status: String.
+SparePart2: id: int, code: String, name: String, img: String, compatibilityNote: String, sellingPrice: double, tax: double, reorderLevel: int, status: String.
+Appointment2: id: int, contactName: String, contactTel: String, vehiclePlate: String, vehicleBrand: String, vehicleModel: String, appointmentTime: LocalDateTime, note: String, status: String.
+Order2: id: int, receivedAt: LocalDateTime, vehiclePlate: String, vehicleBrand: String, vehicleModel: String.
+OrderDetail2: id: int, appliedTax: double, unitPrice: double.
+ServiceDetail2: description: String, status: String.
+PartDetail2: quantity: int.
+PartsReceipt2: id: int, receivedAt: LocalDateTime.
+PartsReceiptDetail2: id: int, quantity: int, unitPrice: double.
+CustomerStatistic2: startDate: LocalDate, endDate: LocalDate, totalInvoice: int, totalRevenue: double.
+ServiceStatistic2: startDate: LocalDate, endDate: LocalDate.
+SparePartStatistic2: startDate: LocalDate, endDate: LocalDate.
+SupplierStatistic2: startDate: LocalDate, endDate: LocalDate.
+Invoice2: id: int, code: String, createdAt: LocalDateTime, subTotal: double, taxTotal: double, total: double, paidAt: LocalDateTime, method: String, referenceCode: String. Trạng thái thanh toán không lưu thành thuộc tính riêng mà được suy ra từ paidAt.
+Các lớp thực thể và thuộc tính trên được lấy từ mô hình phân tích hiện tại của hệ thống garage, trong đó Appointment2, Order2, OrderDetail2, ServiceDetail2, PartDetail2, PartsReceipt2, PartsReceiptDetail2 và Invoice2 đều đã được xác định trong pha phân tích.
+Chuyển đổi và hoàn thiện các quan hệ giữa các lớp
+Các quan hệ chứa được chuyển sang dạng composition/aggregation khi phù hợp:
+Order2 chứa các OrderDetail2 phát sinh trong một lần tiếp nhận, do đó quan hệ Order2 - OrderDetail2 được biểu diễn dưới dạng composition.
+ServiceDetail2 và PartDetail2 kế thừa từ OrderDetail2.
+PartsReceipt2 chứa các PartsReceiptDetail2 của từng phụ tùng trong một lần nhập, do đó quan hệ PartsReceipt2 - PartsReceiptDetail2 được biểu diễn dưới dạng composition.
+Customer2 liên kết với Order2 để xác định khách hàng của mỗi lần tiếp nhận.
+Service2 liên kết với ServiceDetail2 để xác định dịch vụ cụ thể.
+TechnicalStaff2 liên kết với ServiceDetail2 để xác định nhân viên kỹ thuật được phân công.
+SparePart2 liên kết với PartDetail2 để xác định phụ tùng sử dụng hoặc bán.
+Supplier2 và WarehouseStaff2 liên kết với PartsReceipt2 để xác định nhà cung cấp và nhân viên kho của lần nhập.
+SparePart2 liên kết với PartsReceiptDetail2 để xác định loại phụ tùng trong từng lần nhập.
+Order2 liên kết với Invoice2 để xác định hóa đơn của lần tiếp nhận.
+SalesStaff2 liên kết với Invoice2 để xác định nhân viên tiếp nhận và ghi nhận thanh toán.
+Các quan hệ này phù hợp với các quan hệ đã xác định trong pha phân tích của hệ thống.
+Bổ sung các thuộc tính kiểu đối tượng
+Dựa trên các quan hệ giữa các lớp thực thể đã xác định ở pha phân tích, tiến hành bổ sung các thuộc tính kiểu đối tượng cho các lớp có quan hệ chứa hoặc tham chiếu đến lớp khác. Cụ thể:
+Order2 bổ sung customer: Customer2 và orderDetails: List<OrderDetail2> để lưu khách hàng của lần tiếp nhận và các yêu cầu phát sinh.
+ServiceDetail2 bổ sung service: Service2 và technicalStaff: TechnicalStaff2 để xác định dịch vụ được thực hiện và nhân viên kỹ thuật được phân công.
+PartDetail2 bổ sung sparePart: SparePart2 để xác định phụ tùng được sử dụng hoặc bán.
+PartsReceipt2 bổ sung supplier: Supplier2, warehouseStaff: WarehouseStaff2 và partsReceiptDetails: List<PartsReceiptDetail2> để xác định nhà cung cấp, nhân viên kho và các chi tiết của lần nhập.
+PartsReceiptDetail2 bổ sung sparePart: SparePart2 để xác định phụ tùng tương ứng trong lần nhập.
+Invoice2 bổ sung order: Order2 và salesStaff: SalesStaff2 để xác định lần tiếp nhận được lập hóa đơn và nhân viên kinh doanh chịu trách nhiệm xử lý thanh toán.
+SƠ ĐỒ CƠ SỞ DỮ LIỆU CỦA HỆ THỐNG
+Bước 1
+Mỗi lớp thực thể đề xuất bảng tương ứng:
+Lớp Staff2 → bảng tblStaff2
+Các lớp ManagementStaff2, SalesStaff2, WarehouseStaff2 và TechnicalStaff2 được gộp vào tblStaff2 và phân biệt bằng thuộc tính role.
+Lớp Customer2 → bảng tblCustomer2
+Lớp Supplier2 → bảng tblSupplier2
+Lớp Service2 → bảng tblService2
+Lớp SparePart2 → bảng tblSparePart2
+Lớp Appointment2 → bảng tblAppointment2
+Lớp Order2 → bảng tblOrder2
+Lớp OrderDetail2 → bảng tblOrderDetail2
+Lớp ServiceDetail2 → bảng tblServiceDetail2
+Lớp PartDetail2 → bảng tblPartDetail2
+Lớp PartsReceipt2 → bảng tblPartsReceipt2
+Lớp PartsReceiptDetail2 → bảng tblPartsReceiptDetail2
+Lớp Invoice2 → bảng tblInvoice2
+Lớp CustomerStatistic2 → bảng tblCustomerStatistic2
+Lớp ServiceStatistic2 → bảng tblServiceStatistic2
+Lớp SparePartStatistic2 → bảng tblSparePartStatistic2
+Lớp SupplierStatistic2 → bảng tblSupplierStatistic2
+Bước 2
+Đưa thuộc tính không phải đối tượng của lớp thực thể thành thuộc tính của bảng tương ứng:
+tblStaff2 có các thuộc tính: id, name, tel, email, username, password, status, role.
+tblCustomer2: id, code, name, tel, email, address.
+tblSupplier2: id, name, taxCode, tel, email, address, status.
+tblService2: id, code, name, description, basePrice, estimatedDuration, tax, status.
+tblSparePart2: id, code, name, img, compatibilityNote, sellingPrice, tax, reorderLevel, status.
+tblAppointment2: id, contactName, contactTel, vehiclePlate, vehicleBrand, vehicleModel, appointmentTime, note, status.
+tblOrder2: id, receivedAt, vehiclePlate, vehicleBrand, vehicleModel.
+tblOrderDetail2: id, appliedTax, unitPrice.
+tblServiceDetail2: description, status.
+tblPartDetail2: quantity.
+tblPartsReceipt2: id, receivedAt.
+tblPartsReceiptDetail2: id, quantity, unitPrice.
+tblInvoice2: id, code, createdAt, subTotal, taxTotal, total, paidAt, method, referenceCode.
+tblCustomerStatistic2: startDate, endDate, totalInvoice, totalRevenue.
+tblServiceStatistic2: startDate, endDate.
+tblSparePartStatistic2: startDate, endDate.
+tblSupplierStatistic2: startDate, endDate.
+Các thuộc tính kiểu đối tượng như customer, orderDetails, service, technicalStaff, sparePart, supplier, warehouseStaff, partsReceiptDetails, order, salesStaff không được đưa trực tiếp thành thuộc tính của bảng tại bước này.
+Bước 3
+Chuyển quan hệ số lượng giữa các lớp thực thể thành quan hệ số lượng giữa các bảng:
+1 tblCustomer2 - n tblOrder2
+1 tblOrder2 - n tblOrderDetail2
+1 tblService2 - n tblServiceDetail2
+1 tblStaff2 - n tblServiceDetail2 (role = Technical Staff)
+1 tblSparePart2 - n tblPartDetail2
+1 tblSupplier2 - n tblPartsReceipt2
+1 tblStaff2 - n tblPartsReceipt2 (role = Warehouse Staff)
+1 tblPartsReceipt2 - n tblPartsReceiptDetail2
+1 tblSparePart2 - n tblPartsReceiptDetail2
+1 tblOrder2 - 0..1 tblInvoice2
+1 tblStaff2 - n tblInvoice2 (role = Sales Staff)
+Quan hệ n-n giữa PartsReceipt2 và SparePart2 đã được tách thông qua PartsReceiptDetail2 ở pha phân tích nên tại bước thiết kế CSDL không còn quan hệ n-n cần xử lý.
+Các lớp ManagementStaff2, SalesStaff2, WarehouseStaff2 và TechnicalStaff2 được gộp vào tblStaff2 và phân biệt bằng role.
+Các quan hệ kế thừa còn được giữ ở CSDL gồm:
+ServiceDetail2, PartDetail2 kế thừa OrderDetail2.
+Các lớp thống kê kế thừa từ các lớp thực thể tương ứng.
+Bước 4
+Bổ sung các thuộc tính khóa.
+Khóa chính được thiết lập với thuộc tính id của các bảng tương ứng:
+tblStaff2.id
+tblCustomer2.id
+tblSupplier2.id
+tblService2.id
+tblSparePart2.id
+tblAppointment2.id
+tblOrder2.id
+tblOrderDetail2.id
+tblPartsReceipt2.id
+tblPartsReceiptDetail2.id
+tblInvoice2.id
+Các bảng tương ứng với lớp kế thừa còn được giữ sử dụng khóa của bảng cha:
+tblServiceDetail2 có orderDetailId, tham chiếu tblOrderDetail2.id.
+tblPartDetail2 có orderDetailId, tham chiếu tblOrderDetail2.id.
+Khóa ngoại được thiết lập cho các bảng:
+1 tblCustomer2 - n tblOrder2 → bảng tblOrder2 có khóa ngoại customerId.
+1 tblOrder2 - n tblOrderDetail2 → bảng tblOrderDetail2 có khóa ngoại orderId.
+1 tblService2 - n tblServiceDetail2 → bảng tblServiceDetail2 có khóa ngoại serviceId.
+1 tblStaff2 - n tblServiceDetail2 (role = Technical Staff) → bảng tblServiceDetail2 có khóa ngoại technicalStaffId tham chiếu tblStaff2.id; thuộc tính này có thể không có giá trị khi chưa phân công nhân viên kỹ thuật.
+1 tblSparePart2 - n tblPartDetail2 → bảng tblPartDetail2 có khóa ngoại sparePartId.
+1 tblSupplier2 - n tblPartsReceipt2 → bảng tblPartsReceipt2 có khóa ngoại supplierId.
+1 tblStaff2 - n tblPartsReceipt2 (role = Warehouse Staff) → bảng tblPartsReceipt2 có khóa ngoại warehouseStaffId tham chiếu tblStaff2.id.
+1 tblPartsReceipt2 - n tblPartsReceiptDetail2 → bảng tblPartsReceiptDetail2 có khóa ngoại partsReceiptId.
+1 tblSparePart2 - n tblPartsReceiptDetail2 → bảng tblPartsReceiptDetail2 có khóa ngoại sparePartId.
+1 tblOrder2 - 0..1 tblInvoice2 → bảng tblInvoice2 có khóa ngoại orderId.
+1 tblStaff2 - n tblInvoice2 (role = Sales Staff) → bảng tblInvoice2 có khóa ngoại salesStaffId tham chiếu tblStaff2.id.
+Như vậy sau khi bổ sung khóa, các bảng chính có cấu trúc:
+tblStaff2: id, name, tel, email, username, password, status, role.
+tblOrder2: id, receivedAt, vehiclePlate, vehicleBrand, vehicleModel, customerId.
+tblOrderDetail2: id, appliedTax, unitPrice, orderId.
+tblServiceDetail2: orderDetailId, description, status, serviceId, technicalStaffId.
+tblPartDetail2: orderDetailId, quantity, sparePartId.
+tblPartsReceipt2: id, receivedAt, supplierId, warehouseStaffId.
+tblPartsReceiptDetail2: id, quantity, unitPrice, partsReceiptId, sparePartId.
+tblInvoice2: id, code, createdAt, subTotal, taxTotal, total, paidAt, method, referenceCode, orderId, salesStaffId.
+Bước 5
+Các dữ liệu dư thừa và dẫn xuất được xử lý như sau:
+Không lưu paymentStatus; trạng thái thanh toán được xác định từ paidAt.
+Loại bỏ các bảng thống kê:
+tblCustomerStatistic2
+tblServiceStatistic2
+tblSparePartStatistic2
+tblSupplierStatistic2
+totalInvoice, totalRevenue được tính khi thống kê, không lưu riêng.
+Giữ unitPrice, appliedTax trong tblOrderDetail2 và unitPrice trong tblPartsReceiptDetail2 để bảo toàn giá trị lịch sử.
+Giữ subTotal, taxTotal, total trong tblInvoice2 để lưu snapshot hóa đơn và tránh tính toán lặp lại.
+Kết quả cuối cùng được thể hiện trong biểu đồ thiết kế CSDL.
+THIẾT KẾ GIAO DIỆN WEB
+Module 1: Search Services/Parts Information
+Garage Management System
+Login
+Search Services / Spare Parts
+Back
+Search Services / Spare Parts
+Keyword:
+Service    ⏷
+Search
+Search Results:
+No.
+Code
+Name
+Price
+Status
+Back
+Search Services / Spare Parts
+Keyword: Brake
+Service    ⏷
+Search
+Search Results:
+No.
+Code
+Name
+Price (VND)
+Status
+1
+SV01
+Brake Inspection
+200,000 
+Available
+2
+SV02
+Brake Pad Replacement
+500,000 
+Available
+Back
+Service Details
+Information
+Value
+Service Code
+SV02
+Service Name
+Brake Pad Replacement
+Description
+Replace worn brake pads and inspect braking components
+Base Price (VND)
+500,000
+Estimated Duration
+60 minutes
+Status
+Available
+Module 2: View Customer Statistics
+After Login:
+Management Dashboard
+Statistics
+Username: xxx
+Log Out
+Back
+Statistics
+Customer Statistics
+Spare Part Statistics
+Supplier Statistics
+Service Statistics
+Customer Statistics
+Start Date:
+End Date:
+Search
+Results
+No.
+Customer Code
+Customer Name
+Phone Number
+Invoice Count
+Total Revenue
+Total Revenue:
+Back
+Customer Statistics
+Start Date:
+01/08/2026
+End Date:
+31/08/2026
+Search
+Results
+No.
+Customer Code
+Customer Name
+Phone Number
+Invoice Count
+Total Revenue (VND)
+1
+KH001
+Khách mẫu KH001
+DEMO-KH001
+3
+6.500.000 
+2
+KH002
+Khách mẫu KH002
+DEMO-KH002
+2
+4.200.000 
+3
+KH003
+Khách mẫu KH003
+DEMO-KH003
+1
+1.800.000 
+Total Revenue: 12.500.000 VND
+Back
+Customer Revenue Details
+Period: 01/08/2026 - 31/08/2026
+Customer Information
+Customer Code
+KH001
+Customer Name
+Khách mẫu KH001
+Phone Number
+DEMO-KH001
+Invoice Count
+3
+Total Revenue
+6.500.000 VND
+Invoice List:
+No.
+Invoice Number
+Created At
+Total Amount (VND)
+1
+HD001
+05/08/2026
+2.200.000 
+2
+HD002
+15/08/2026
+1.650.000 
+3
+HD003
+26/08/2026
+2.650.000 
+Back
+Invoice Details
+Invoice Number
+HD001
+Customer
+Khách mẫu KH001
+Created At
+05/08/2026
+Status
+Paid
+No.
+Type
+Service / Spare Part Name
+Qty
+Unit Price
+Amount Before Tax
+Tax Rate
+Tax Amount
+Line Total
+1
+Service
+Brake Pad Replacement
+1
+500.000
+500.000
+10%
+50.000
+550.000
+2
+Spare Part
+Front Brake Pads
+2
+600.000
+1.200.000
+10%
+120.000
+1.320.000
+3
+Service
+Brake System Inspection
+1
+300.000
+300.000
+10%
+30.000
+330.000
+Amount Type
+Value
+Subtotal
+2.000.000 VND
+Total Tax
+200.000 VND
+Total Amount
+2.200.000 VND
+Payment Information
+Payment Time
+Payment Method
+Reference Code
+Staff
+05/08/2026 10:30
+Bank Transfer
+TT001
+Staff ABC
+Activity Diagram
+Module 1:
+Module 2:
+I. Search Services/Parts Information2 — Scenario v3.0
+Biểu đồ tuần tự của chức năng tìm kiếm dịch vụ và phụ tùng được trình bày trong hình trên. Kịch bản các hoạt động diễn ra như sau:
+Tại trang MainUI2.jsp, người dùng chọn chức năng Search Service/Part.
+Trang MainUI2.jsp gọi hàm searchFuncClicked() để xử lý sự kiện.
+Trang MainUI2.jsp gọi trang SearchServicesPartsUI2.jsp.
+Trang SearchServicesPartsUI2.jsp hiển thị giao diện tìm kiếm cho người dùng.
+Luồng thay thế (alt):
+Trường hợp 1: Người dùng tìm kiếm dịch vụ (Service)
+Người dùng chọn Service, nhập từ khóa và nhấn Search.
+Trang SearchServicesPartsUI2.jsp gọi hàm searchClicked() để xử lý yêu cầu tìm kiếm.
+Trang SearchServicesPartsUI2.jsp gọi lớp ServiceDAO2 yêu cầu tìm kiếm dịch vụ.
+Lớp ServiceDAO2 gọi hàm getServicesByName().
+Hàm getServicesByName() thực hiện vòng lặp, gọi lớp Service để đóng gói thông tin các dịch vụ tìm được.
+Lớp Service khởi tạo đối tượng Service() và đóng gói thông tin dịch vụ.
+Lớp Service trả kết quả cho lớp ServiceDAO2.
+Lớp ServiceDAO2 trả danh sách dịch vụ cho trang SearchServicesPartsUI2.jsp.
+Trang SearchServicesPartsUI2.jsp hiển thị danh sách dịch vụ cho người dùng.
+Người dùng chọn một dịch vụ.
+Trang SearchServicesPartsUI2.jsp gọi hàm ViewDetails().
+Trang SearchServicesPartsUI2.jsp gọi trang ServiceDetailsUI2.jsp và truyền đối tượng Service được chọn.
+Trang ServiceDetailsUI2.jsp hiển thị thông tin chi tiết dịch vụ cho người dùng.
+Trường hợp 2: Người dùng tìm kiếm phụ tùng (Part)
+Người dùng chọn Part, nhập từ khóa và nhấn Search.
+Trang SearchServicesPartsUI2.jsp gọi hàm searchClicked() để xử lý yêu cầu tìm kiếm.
+Trang SearchServicesPartsUI2.jsp gọi lớp SparePartDAO2 yêu cầu tìm kiếm phụ tùng.
+Lớp SparePartDAO2 gọi hàm getSparePartsByName().
+Hàm getSparePartsByName() thực hiện vòng lặp, gọi lớp SparePart để đóng gói thông tin các phụ tùng tìm được.
+Lớp SparePart khởi tạo đối tượng SparePart() và đóng gói thông tin phụ tùng.
+Lớp SparePart trả kết quả cho lớp SparePartDAO2.
+Lớp SparePartDAO2 trả danh sách phụ tùng cho trang SearchServicesPartsUI2.jsp.
+Trang SearchServicesPartsUI2.jsp hiển thị danh sách phụ tùng cho người dùng.
+Người dùng chọn một phụ tùng.
+Trang SearchServicesPartsUI2.jsp gọi hàm ViewDetails().
+Trang SearchServicesPartsUI2.jsp gọi trang PartDetailsUI2.jsp và truyền đối tượng Part được chọn.
+Trang PartDetailsUI2.jsp hiển thị thông tin chi tiết phụ tùng cho người dùng.
+II. View Customer Statistic — Scenario v3.0
+Tại trang ManagementStaffUI2.jsp, sau khi đăng nhập, Management Staff chọn chức năng View Statistics.
+Trang ManagementStaffUI2.jsp gọi hàm ViewStatClicked() để xử lý sự kiện.
+Trang ManagementStaffUI2.jsp gọi trang StatisticsUI2.jsp và truyền thông tin Staff.
+Trang StatisticsUI2.jsp hiển thị các loại thống kê cho Management Staff.
+Management Staff chọn Customer Statistics.
+Trang StatisticsUI2.jsp gọi hàm CustomerStatClicked() để xử lý sự kiện.
+Trang StatisticsUI2.jsp gọi trang CustomerStatisticsUI2.jsp và truyền thông tin Staff.
+Trang CustomerStatisticsUI2.jsp hiển thị giao diện thống kê khách hàng cho Management Staff.
+Management Staff nhập ngày bắt đầu 01/08/2026, ngày kết thúc 31/08/2026 và nhấn Search.
+Trang CustomerStatisticsUI2.jsp gọi hàm searchClicked() để xử lý yêu cầu thống kê.
+Trang CustomerStatisticsUI2.jsp gọi lớp CustomerStatisticsDAO2 yêu cầu lấy dữ liệu thống kê khách hàng trong khoảng thời gian đã chọn.
+Lớp CustomerStatisticsDAO2 gọi hàm getCustomerStatistics() để lấy các hóa đơn đã thanh toán trong khoảng thời gian, nhóm theo Customer và tính số hóa đơn cùng tổng doanh thu.
+Hàm getCustomerStatistics() thực hiện vòng lặp, gọi lớp CustomerStatistics2 để đóng gói thông tin thống kê của từng khách hàng.
+Lớp CustomerStatistics2 khởi tạo đối tượng CustomerStatistics2().
+Lớp CustomerStatistics2 gọi lớp Customer2 để đóng gói thông tin khách hàng tương ứng.
+Lớp Customer2 khởi tạo đối tượng Customer2().
+Lớp Customer2 trả kết quả cho lớp CustomerStatistics2.
+Lớp CustomerStatistics2 trả kết quả cho lớp CustomerStatisticsDAO2.
+Lớp CustomerStatisticsDAO2 trả danh sách thống kê khách hàng cho trang CustomerStatisticsUI2.jsp.
+Trang CustomerStatisticsUI2.jsp hiển thị danh sách thống kê khách hàng theo tổng doanh thu giảm dần cho Management Staff.
+Management Staff chọn Customer Khách mẫu KH001 trong danh sách thống kê.
+Trang CustomerStatisticsUI2.jsp gọi hàm xử lý sự kiện chọn khách hàng.
+Trang CustomerStatisticsUI2.jsp gọi trang CustomerInvoicesUI2.jsp và truyền thông tin Staff cùng đối tượng CustomerStatistics2 được chọn.
+Trang CustomerInvoicesUI2.jsp gọi lớp InvoiceDAO2 yêu cầu lấy danh sách hóa đơn của Customer trong khoảng thời gian thống kê.
+Lớp InvoiceDAO2 gọi hàm getInvoicesByCustomer() để lấy danh sách hóa đơn đã thanh toán của Customer trong khoảng thời gian được chọn.
+Hàm getInvoicesByCustomer() thực hiện vòng lặp, gọi lớp Invoice2 để đóng gói thông tin từng hóa đơn tìm được.
+Lớp Invoice2 khởi tạo đối tượng Invoice2().
+Lớp Invoice2 gọi lớp Order2 để đóng gói thông tin Order tương ứng với hóa đơn.
+Lớp Order2 khởi tạo đối tượng Order2().
+Lớp Order2 trả kết quả cho lớp Invoice2.
+Lớp Invoice2 trả kết quả cho lớp InvoiceDAO2.
+Lớp InvoiceDAO2 trả danh sách Invoice2 cho trang CustomerInvoicesUI2.jsp.
+Trang CustomerInvoicesUI2.jsp hiển thị thông tin Customer và danh sách hóa đơn cho Management Staff.
+Management Staff chọn Invoice HD001 trong danh sách.
+Trang CustomerInvoicesUI2.jsp gọi hàm viewInvoiceDetailClicked() để xử lý yêu cầu xem chi tiết hóa đơn.
+Trang CustomerInvoicesUI2.jsp gọi trang InvoiceDetailsUI2.jsp và truyền thông tin Staff, đối tượng CustomerStatistics2 cùng đối tượng Invoice2 được chọn.
+Trang InvoiceDetailsUI2.jsp gọi lớp OrderDetailDAO2 yêu cầu lấy danh sách chi tiết của Order2 tương ứng với Invoice được chọn.
+Lớp OrderDetailDAO2 gọi hàm getOrderDetails() để lấy danh sách các ServiceDetail2 và PartDetail2 thuộc Order2 tương ứng.
+Hàm getOrderDetails() thực hiện vòng lặp, gọi lớp OrderDetail2 để đóng gói thông tin từng chi tiết đơn hàng.
+Lớp OrderDetail2 khởi tạo đối tượng OrderDetail2().
+Lớp OrderDetail2 trả kết quả cho lớp OrderDetailDAO2.
+Lớp OrderDetailDAO2 trả danh sách OrderDetail2 cho trang InvoiceDetailsUI2.jsp.
+Trang InvoiceDetailsUI2.jsp sử dụng đối tượng Invoice2 đã nhận cùng danh sách OrderDetail2 để hiển thị thông tin hóa đơn, các Service/Spare Part, tổng tiền và thông tin thanh toán cho Management Staff.

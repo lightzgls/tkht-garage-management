@@ -1,0 +1,19 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.*,java.time.*,java.time.format.*,java.sql.*,vn.edu.garage.model.*,vn.edu.garage.dao.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%!
+    String money(double value) {
+        return java.text.NumberFormat.getIntegerInstance(Locale.forLanguageTag("vi-VN")).format(value);
+    }
+    String date(LocalDate value) {
+        return value.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
+    }
+    LocalDate parseDate(String value) {
+        if (!value.contains("/")) { return LocalDate.parse(value); }
+        // Tiếp tục đọc được các link thống kê dd/MM/yyyy đã lưu từ bản trước.
+        return LocalDate.parse(value, DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT));
+    }
+%>
+<% request.setCharacterEncoding("UTF-8"); %>

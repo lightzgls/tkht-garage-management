@@ -1,0 +1,766 @@
+01 - Entity Class Diagram
+@startuml
+title Entity Class Diagram - Garage Management System
+top to bottom direction
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+hide empty methods
+class Staff2 {
+  -tel : String
+  -name : String
+  -email : String
+  -username : String
+  -password : String
+  -status : String
+  -id : int
+}
+class SalesStaff2
+class ManagementStaff
+class TechnicalStaff2
+class WarehouseStaff2
+class Supplier2 {
+  -taxCode : String
+  -name : String
+  -tel : String
+  -email : String
+  -address : String
+  -status : String
+  -id : int
+}
+class Service2 {
+  -name : String
+  -description : String
+  -basePrice : double
+  -estimatedDuration : int
+  -tax : double
+  -status : String
+  -id : int
+  -code : String
+}
+class SparePart2 {
+  -name : String
+  -img : String
+  -compatibilityNote : String
+  -sellingPrice : double
+  -tax : double
+  -reorderLevel : int
+  -status : String
+  -id : int
+  -code : String
+}
+class Customer2 {
+  -name : String
+  -tel : String
+  -email : String
+  -address : String
+  -id : int
+  -code : String
+}
+class Appointment2 {
+  -id : int
+  -time : LocalDateTime
+  -note : String
+  -status : String
+  -contactName : String
+  -contactTel : String
+  -vehiclePlate : String
+  -vehicleBrand : String
+  -vehicleModel : String
+}
+class Order2 {
+  -receivedAt : LocalDateTime
+  -vehiclePlate : String
+  -vehicleBrand : String
+  -vehicleModel : String
+  -id : int
+  -orderDetails : List<OrderDetail2>
+  -customer : Customer2
+}
+class OrderDetail2 {
+  -appliedTax : double
+  -unitPrice : double
+  -id : int
+}
+class ServiceDetail2 {
+  -description : String
+  -status : String
+  -technicalStaff : TechnicalStaff2
+  -service : Service2
+}
+class PartDetail2 {
+  -quantity : int
+  -sparePart : SparePart2
+}
+class Invoice2 {
+  -createdAt : LocalDateTime
+  -subTotal : double
+  -taxTotal : double
+  -total : double
+  -paidAt : LocalDateTime
+  -method : String
+  -referenceCode : String
+  -id : int
+  -code : String
+  -order : Order2
+  -salesStaff : SalesStaff2
+}
+class PartsReceipt2 {
+  -receivedAt : LocalDateTime
+  -id : int
+  -warehouseStaff : WarehouseStaff2
+  -supplier : Supplier2
+  -partReceiptDetails : List<PartsReceiptDetail2>
+}
+class PartsReceiptDetail2 {
+  -quantity : int
+  -unitPrice : double
+  -id : int
+  -sparePart : SparePart2
+}
+class CustomerStatistics2 {
+  -startDate : LocalDate
+  -endDate : LocalDate
+  -totalInvoice : int
+  -totalRevenue : double
+}
+class ServiceStatistics2 {
+  -startDate : LocalDate
+  -endDate : LocalDate
+}
+class SupplierStatistic2 {
+  -startDate : LocalDate
+  -endDate : LocalDate
+}
+class SparePartStatistic2 {
+  -startDate : LocalDate
+  -endDate : LocalDate
+}
+Staff2 <|-- SalesStaff2
+Staff2 <|-- ManagementStaff
+Staff2 <|-- TechnicalStaff2
+Staff2 <|-- WarehouseStaff2
+Service2 <|-- ServiceStatistics2
+Customer2 <|-- CustomerStatistics2
+Supplier2 <|-- SupplierStatistic2
+SparePart2 <|-- SparePartStatistic2
+OrderDetail2 <|-- ServiceDetail2
+OrderDetail2 <|-- PartDetail2
+SalesStaff2 --o Invoice2
+Invoice2 o-- Order2
+Order2 o-- Customer2
+Order2 "1" *-- "1..*" OrderDetail2
+TechnicalStaff2 --o ServiceDetail2
+Service2 --o ServiceDetail2
+PartDetail2 o-- SparePart2
+WarehouseStaff2 --o PartsReceipt2
+Supplier2 --o PartsReceipt2
+PartsReceipt2 "1" *-- "1..*" PartsReceiptDetail2
+PartsReceiptDetail2 o-- SparePart2
+@enduml
+02 - Database Diagram
+@startuml
+title Database Diagram - Garage Management System
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+hide methods
+entity "tblStaff2" as S #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  name : varchar(255)
+  tel : varchar(30)
+  email : varchar(255) <<N>>
+  username : varchar(100) <<U>>
+  password : varchar(255)
+  status : varchar(30)
+  role : varchar(30)
+}
+entity "tblCustomer2" as C #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  code : varchar(50) <<U>>
+  name : varchar(255)
+  tel : varchar(30)
+  email : varchar(255) <<N>>
+  address : varchar(255)
+}
+entity "tblSupplier2" as SU #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  name : varchar(255)
+  taxCode : varchar(50) <<U>>
+  tel : varchar(30)
+  email : varchar(255) <<N>>
+  address : varchar(255)
+  status : varchar(30)
+}
+entity "tblService2" as SV #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  code : varchar(50) <<U>>
+  name : varchar(255)
+  description : varchar(2000) <<N>>
+  basePrice : decimal(18, 2)
+  estimatedDuration : integer(10)
+  tax : decimal(5, 2)
+  status : varchar(30)
+}
+entity "tblSparePart2" as SP #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  code : varchar(50) <<U>>
+  name : varchar(255)
+  img : varchar(1000) <<N>>
+  compatibilityNote : varchar(2000) <<N>>
+  sellingPrice : decimal(18, 2)
+  tax : decimal(5, 2)
+  reorderLevel : integer(10)
+  status : varchar(30)
+}
+entity "tblAppointment2" as A #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  contactName : varchar(255)
+  contactTel : varchar(30)
+  vehiclePlate : varchar(30)
+  vehicleBrand : varchar(100)
+  vehicleModel : varchar(100)
+  appointmentTime : timestamp
+  note : varchar(2000) <<N>>
+  status : varchar(30)
+}
+entity "tblOrder2" as O #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  receivedAt : timestamp
+  vehiclePlate : varchar(30) <<N>>
+  vehicleBrand : varchar(100) <<N>>
+  vehicleModel : varchar(100) <<N>>
+  customerId : integer(10) <<FK>>
+}
+entity "tblOrderDetail2" as OD #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  appliedTax : decimal(5, 2)
+  unitPrice : decimal(18, 2)
+  orderId : integer(10) <<FK>>
+}
+entity "tblServiceDetail2" as SD #F7B77D {
+  * orderDetailId : integer(10) <<PK, FK>>
+  --
+  description : varchar(2000) <<N>>
+  status : varchar(30)
+  serviceId : integer(10) <<FK>>
+  technicalStaffId : integer(10) <<FK, N>>
+}
+entity "tblPartDetail2" as PD #F7B77D {
+  * orderDetailId : integer(10) <<PK, FK>>
+  --
+  quantity : integer(10)
+  sparePartId : integer(10) <<FK>>
+}
+entity "tblPartsReceipt2" as PR #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  receivedAt : timestamp
+  supplierId : integer(10) <<FK>>
+  warehouseStaffId : integer(10) <<FK>>
+}
+entity "tblPartsReceiptDetail2" as PRD #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  quantity : integer(10)
+  unitPrice : decimal(18, 2)
+  partsReceiptId : integer(10) <<FK>>
+  sparePartId : integer(10) <<FK>>
+}
+entity "tblInvoice2" as I #F7B77D {
+  * id : integer(10) <<PK>>
+  --
+  code : varchar(50) <<U>>
+  createdAt : timestamp
+  subTotal : decimal(18, 2)
+  taxTotal : decimal(18, 2)
+  total : decimal(18, 2)
+  paidAt : timestamp <<N>>
+  method : varchar(50) <<N>>
+  referenceCode : varchar(100) <<N>>
+  orderId : integer(10) <<FK, U>>
+  salesStaffId : integer(10) <<FK>>
+}
+C "1" .. "0..*" O : customerId
+O "1" .. "0..*" OD : orderId
+SV "1" .. "0..*" SD : serviceId
+S "1" .. "0..*" SD : technicalStaffId
+SP "1" .. "0..*" PD : sparePartId
+OD "1" .. "0..1" SD : orderDetailId
+OD "1" .. "0..1" PD : orderDetailId
+SU "1" .. "0..*" PR : supplierId
+S "1" .. "0..*" PR : warehouseStaffId
+PR "1" .. "0..*" PRD : partsReceiptId
+SP "1" .. "0..*" PRD : sparePartId
+O "1" .. "0..1" I : orderId
+S "1" .. "0..*" I : salesStaffId
+@enduml
+03 - Detail Class Diagram - Search Services Parts
+@startuml
+title Search Services/Parts - Detailed Class Diagram
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+class "MainUI2.jsp" as MainUI {
+ - searchServicesParts : Link
+}
+class "SearchServicesPartsUI2.jsp" as SearchUI {
+ - searchType : Select
+ - keyword : Input
+ - btnSearch : Submit
+ - tblResults : Table
+ - back : Link
+ - services : List<Service2>
+ - spareParts : List<SparePart2>
+ - page : int
+}
+class "ServiceDetailsUI2.jsp" as ServiceUI {
+ - tblInformation : Table
+ - selectedService : Service2
+ - back : Link
+}
+class "PartDetailsUI2.jsp" as PartUI {
+ - tblInformation : Table
+ - selectedPart : SparePart2
+ - back : Link
+}
+class DAO2 {
+ # con : Connection
+ + DAO2()
+}
+class ServiceDAO2 {
+ + ServiceDAO2()
+ + getServicesByName(keyword : String, page : int) : List<Service2>
+}
+class SparePartDAO2 {
+ + SparePartDAO2()
+ + getSparePartsByName(keyword : String, page : int) : List<SparePart2>
+}
+class Service2 {
+ - id : int
+ - code : String
+ - name : String
+ - description : String
+ - basePrice : double
+ - estimatedDuration : int
+ - tax : double
+ - status : String
+}
+class SparePart2 {
+ - name : String
+ - img : String
+ - compatibilityNote : String
+ - sellingPrice : double
+ - tax : double
+ - reorderLevel : int
+ - status : String
+ - code : String
+}
+DAO2 <|-- ServiceDAO2
+DAO2 <|-- SparePartDAO2
+MainUI -- SearchUI
+SearchUI -- ServiceUI
+SearchUI -- PartUI
+SearchUI -- ServiceDAO2
+SearchUI -- SparePartDAO2
+SearchUI -- Service2
+SearchUI -- SparePart2
+ServiceUI -- Service2
+PartUI -- SparePart2
+ServiceDAO2 -- Service2
+SparePartDAO2 -- SparePart2
+@enduml
+04 - Detail Class Diagram - Customer Statistics
+@startuml
+title View Customer Statistics - Detailed Class Diagram
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+class "ManagementStaffUI2.jsp" as ManagementUI {
+ - statistics : Link
+ - logout : Submit
+ - staff : Staff2
+}
+class "StatisticsUI2.jsp" as StatisticsUI {
+ - customerStatistics : Link
+ - sparePartStatistics : Link
+ - SupplierStatistics : Link
+ - serviceStatistics : Link
+ - staff : Staff2
+ - back : Link
+}
+class "CustomerStatisticsUI2.jsp" as CustomerUI {
+ - startDate : Input
+ - endDate : Input
+ - btnSearch : Submit
+ - tblCustomers : Table
+ - back : Link
+ - customerStatistics : List<CustomerStatistics2>
+ - staff : Staff2
+ - totalRevenue : double
+}
+class "CustomerInvoicesUI2.jsp" as InvoicesUI {
+ - tblCustomerInformation : Table
+ - tblInvoices : Table
+ - back : Link
+ - selectedCustomer : CustomerStatistics2
+ - invoices : List<Invoice2>
+ - staff : Staff2
+}
+class "InvoiceDetailsUI2.jsp" as DetailsUI {
+ - tblInvoiceInformation : Table
+ - tblOrderDetails : Table
+ - back : Link
+ - orderDetails : List<OrderDetail2>
+ - staff : Staff2
+ - selectedCustomer : CustomerStatistics2
+ - selectedInvoice : Invoice2
+}
+class ManagementStaff
+class Staff2 {
+ - tel : String
+ - name : String
+ - email : String
+ - username : String
+ - password : String
+ - status : String
+ - id : int
+}
+class SalesStaff2
+class CustomerStatistics2 {
+ - totalInvoice : int
+ - totalRevenue : double
+ - startDate : LocalDate
+ - endDate : LocalDate
+}
+class Customer2 {
+ - name : String
+ - tel : String
+ - email : String
+ - address : String
+ - id : int
+ - code : String
+}
+class CustomerStatisticsDAO2 {
+ + CustomerStatisticsDAO2()
+ + getCustomerStatistics(startDate : LocalDate, endDate : LocalDate) : List<CustomerStatistics2>
+}
+class InvoiceDAO2 {
+ + getInvoicesByCustomer(selectedCustomerID : CustomerStatistics2) : List<Invoice2>
+ + InvoiceDAO2()
+}
+class OrderDetailDAO2 {
+ + OrderDetailDAO2()
+ + getOrderDetails(orderID : int) : List<OrderDetail2>
+}
+class Invoice2 {
+ - createdAt : LocalDateTime
+ - subTotal : double
+ - taxTotal : double
+ - total : double
+ - paidAt : LocalDateTime
+ - method : String
+ - referenceCode : String
+ - id : int
+ - code : String
+ - order : Order2
+ - salesStaff : SalesStaff2
+}
+class Order2 {
+ - receivedAt : LocalDateTime
+ - vehiclePlate : String
+ - vehicleBrand : String
+ - vehicleModel : String
+ - id : int
+ - orderDetails : List<OrderDetail2>
+ - customer : Customer2
+}
+class OrderDetail2 {
+ - appliedTax : double
+ - unitPrice : double
+ - id : int
+}
+Staff2 <|-- ManagementStaff
+Staff2 <|-- SalesStaff2
+Customer2 <|-- CustomerStatistics2
+ManagementUI -- StatisticsUI
+StatisticsUI -- CustomerUI
+CustomerUI -- InvoicesUI
+InvoicesUI -- DetailsUI
+ManagementUI -- ManagementStaff
+StatisticsUI -- ManagementStaff
+CustomerUI -- CustomerStatisticsDAO2
+CustomerStatisticsDAO2 -- CustomerStatistics2
+CustomerUI -- CustomerStatistics2
+InvoicesUI -- InvoiceDAO2
+InvoiceDAO2 -- Invoice2
+InvoicesUI -- CustomerStatistics2
+DetailsUI -- OrderDetailDAO2
+OrderDetailDAO2 -- OrderDetail2
+DetailsUI -- Invoice2
+ManagementStaff -- InvoicesUI
+ManagementStaff -- DetailsUI
+Customer2 o-- Order2
+Order2 "1" *-- "1..*" OrderDetail2
+Order2 o-- Invoice2
+SalesStaff2 o-- Invoice2
+@enduml
+05 - Activity Diagram - Module 1
+@startuml
+title Activity - Search Services/Parts Information
+start
+partition "Process at MainUI2.jsp" {
+ :display the UI;
+}
+:click Search Services/Parts;
+partition "Process at SearchServicesPartsUI2.jsp" {
+ :display the UI;
+ if (Search type?) then (Service)
+  :select Service, enter keyword, click Search;
+  partition "ServiceDAO2" {
+   :getServicesByName();
+  }
+  :Get Service List;
+ else (Spare Part)
+  :select SparePart, enter keyword, click Search;
+  partition "SparePartDAO2" {
+   :getSparePartsByName();
+  }
+  :get Spare Part List;
+ endif
+ :got the data;
+ :display the UI;
+ :click on one Service/Part;
+}
+partition "Process at ServiceDetailsUI2.jsp / SparePartDetailsUI2.jsp" {
+ :Receive the service/spare part Information;
+ :Display the UI;
+}
+stop
+@enduml
+06 - Activity Diagram - Module 2
+@startuml
+title Activity - View Customer Statistics
+start
+partition "ManagementStaffUI2.jsp" {
+ :Display Management Staff UI;
+ :Click View Statistics;
+}
+partition "StatisticsUI2.jsp" {
+ :Display statistics types;
+ :Choose Customer Statistics;
+}
+partition "CustomerStatisticsUI2.jsp" {
+ :Display date inputs;
+ :Enter startDate / endDate;
+ :Click Search;
+}
+partition "CustomerStatisticsDAO2" {
+ :getCustomerStatistics(startDate, endDate);
+}
+partition "CustomerStatisticsUI2.jsp" {
+ :Display customer statistics list;
+ :Select Customer;
+}
+partition "CustomerInvoicesUI2.jsp" {
+ :Receive selected CustomerStatistics2;
+}
+partition "InvoiceDAO2" {
+ :getInvoicesByCustomer();
+}
+partition "CustomerInvoicesUI2.jsp" {
+ :Display Customer information and invoices;
+ :Select Invoice;
+}
+partition "InvoiceDetailsUI2.jsp" {
+ :Receive selected Invoice2;
+}
+partition "OrderDetailDAO2" {
+ :getOrderDetails(orderID);
+}
+partition "InvoiceDetailsUI2.jsp" {
+ :Display invoice details and payment information;
+}
+stop
+@enduml
+07 - Sequence Diagram - Search Services Parts
+@startuml
+title Search Services/Parts Information2 - Scenario v3.0
+actor Customer
+participant "MainUI2.jsp" as Main
+participant "SearchServicesPartsUI2.jsp" as Search
+participant "ServiceDAO2" as SDAO
+participant "Service2" as Service
+participant "ServiceDetailsUI2.jsp" as SUI
+participant "SparePartDAO2" as PDAO
+participant "SparePart2" as Part
+participant "PartDetailsUI2.jsp" as PUI
+Customer -> Main : choose Search Service/Part
+activate Main
+Main -> Main : searchFuncClicked()
+Main -> Search : open search page
+activate Search
+Search --> Customer : display search UI
+deactivate Main
+alt Search Service
+ Customer -> Search : select Service, enter keyword, Search
+ Search -> Search : searchClicked()
+ Search -> SDAO : search services
+ activate SDAO
+ SDAO -> SDAO : getServicesByName()
+ loop for each Service
+  SDAO -> Service : Service()
+  activate Service
+  Service --> SDAO : Service2
+  deactivate Service
+ end
+ SDAO --> Search : List<Service2>
+ deactivate SDAO
+ Search --> Customer : display service list
+ Customer -> Search : select Service
+ Search -> Search : ViewDetails()
+ Search -> SUI : open(selectedService)
+ activate SUI
+ SUI --> Customer : display service details
+ deactivate SUI
+else Search Spare Part
+ Customer -> Search : select Part, enter keyword, Search
+ Search -> Search : searchClicked()
+ Search -> PDAO : search spare parts
+ activate PDAO
+ PDAO -> PDAO : getSparePartsByName()
+ loop for each SparePart
+  PDAO -> Part : SparePart()
+  activate Part
+  Part --> PDAO : SparePart2
+  deactivate Part
+ end
+ PDAO --> Search : List<SparePart2>
+ deactivate PDAO
+ Search --> Customer : display spare part list
+ Customer -> Search : select Spare Part
+ Search -> Search : ViewDetails()
+ Search -> PUI : open(selectedPart)
+ activate PUI
+ PUI --> Customer : display spare part details
+ deactivate PUI
+end
+deactivate Search
+@enduml
+08 - Sequence Diagram - Customer Statistics
+@startuml
+title View Customer Statistics2 - Scenario v3.0
+actor "Management Staff" as Staff
+participant "ManagementStaffUI2.jsp" as Main
+participant "StatisticsUI2.jsp" as Stats
+participant "CustomerStatisticsUI2.jsp" as CUI
+participant "CustomerStatisticsDAO2" as CDAO
+participant "CustomerStatistics2" as CS
+participant "Customer2" as C
+participant "CustomerInvoicesUI2.jsp" as IUI
+participant "InvoiceDAO2" as IDAO
+participant "Invoice2" as Invoice
+participant "Order2" as Order
+participant "InvoiceDetailsUI2.jsp" as DetailUI
+participant "OrderDetailDAO2" as ODAO
+participant "OrderDetail2" as OD
+Staff -> Main : choose View Statistics
+Main -> Main : ViewStatClicked()
+Main -> Stats : open(staff)
+Stats --> Staff : display statistics types
+Staff -> Stats : select Customer Statistics
+Stats -> Stats : CustomerStatClicked()
+Stats -> CUI : open(staff)
+CUI --> Staff : display Customer Statistics UI
+Staff -> CUI : enter 01/08/2026 to 31/08/2026, Search
+CUI -> CUI : searchClicked()
+CUI -> CDAO : getCustomerStatistics(startDate,endDate)
+activate CDAO
+CDAO -> CDAO : get paid invoices, group and calculate
+loop each customer statistic
+ CDAO -> CS : CustomerStatistics2()
+ activate CS
+ CS -> C : Customer2()
+ C --> CS : Customer2
+ CS --> CDAO : CustomerStatistics2
+ deactivate CS
+end
+CDAO --> CUI : List<CustomerStatistics2>
+deactivate CDAO
+CUI --> Staff : display sorted statistics
+Staff -> CUI : select Customer Nguyen Van An
+CUI -> CUI : customerSelected()
+CUI -> IUI : open(staff, selectedCustomer)
+IUI -> IDAO : getInvoicesByCustomer()
+activate IDAO
+loop each invoice
+ IDAO -> Invoice : Invoice2()
+ Invoice -> Order : Order2()
+ Order --> Invoice : Order2
+ Invoice --> IDAO : Invoice2
+end
+IDAO --> IUI : List<Invoice2>
+deactivate IDAO
+IUI --> Staff : display Customer and invoices
+Staff -> IUI : select HD001
+IUI -> IUI : viewInvoiceDetailClicked()
+IUI -> DetailUI : open(staff, selectedCustomer, selectedInvoice)
+DetailUI -> ODAO : getOrderDetails(orderID)
+activate ODAO
+loop each order detail
+ ODAO -> OD : OrderDetail2()
+ OD --> ODAO : OrderDetail2
+end
+ODAO --> DetailUI : List<OrderDetail2>
+deactivate ODAO
+DetailUI --> Staff : display invoice, services, parts, payment
+@enduml
+09 - Package Diagram
+@startuml
+title Garage Management System - Package Diagram
+top to bottom direction
+skinparam packageStyle folder
+skinparam linetype ortho
+package "View" {
+ package "Main UI" {}
+ package "Sales Staff" {}
+ package "Warehouse staff" {}
+ package "Management staff" {}
+}
+package "DAO" {}
+package "Model" {}
+"View" -- "DAO"
+"DAO" -- "Model"
+@enduml
+10 - Deployment Diagram
+@startuml
+title Garage Management System - Deployment Diagram
+left to right direction
+skinparam linetype ortho
+skinparam shadowing false
+node "Web browser:\nChrome / Firefox / Edge" <<device>> as Browser
+node "Server - Ubuntu Server 24.04 LTS" <<device>> as Server {
+ component "OpenJDK 17 LTS" as Java
+ component "Apache Tomcat\n9.0.x" as Tomcat
+ component "Servlet 4.0 / JSP 2.3" as Servlet
+ component "MySQL Server 8.4 LTS -\nDatabase: garage_management" as MySQL
+ component "Application Libraries: MySQL Connector" as Connector
+ component "garage-management.war:\nMVC / Java EE 8 / JSP /\nHTML / CSS / Javascript" as App
+ component "Nginx: Reverse Proxy/Https" as Nginx
+ Java -[hidden]down- Tomcat
+ Tomcat -[hidden]down- Servlet
+ Servlet -[hidden]down- MySQL
+ Connector -[hidden]down- App
+ App -[hidden]down- Nginx
+}
+Browser -- Server
+@enduml
